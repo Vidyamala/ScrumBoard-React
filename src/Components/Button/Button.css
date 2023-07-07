@@ -1,0 +1,11 @@
+.button{
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+.button button{
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    color: wheat;
+    letter-spacing: 0.1rem;
+}

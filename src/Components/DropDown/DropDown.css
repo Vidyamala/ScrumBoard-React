@@ -1,0 +1,25 @@
+.dropbtn {
+    /* background-color: rgb(160, 164, 168); */
+    background-color: rgba(73, 72, 69,0.7);
+    /* color: whitesmoke; */
+    /* color: rgb(32, 32, 32); */
+    color: wheat;
+    padding: 10px;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    border: none;
+    outline: none;
+    /* border: 1px solid rgb(58, 58, 58); */
+    cursor: pointer;
+    letter-spacing: 0.1rem;
+    /* text-shadow: 0.5px 0.5px black; */
+  }
+  .dropbtn option{
+    background-color: rgb(184, 199, 212);
+    padding: 70px;
+    color: rgb(148, 80, 80);
+  }
+ .dropbtn:hover{
+    border: none;
+    outline: none;
+ }

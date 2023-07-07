@@ -1,0 +1,63 @@
+.modalbody{
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.1rem;
+}
+.modalbody input{
+    margin-bottom: 25px;
+    border: none;
+    border-bottom: 1px solid gray;
+   /* outline: none; */
+   padding-left: 5px;
+   display: block;
+   border-radius: 0;
+}
+.modalbody input:focus{
+    /* border: 1px solid gray; */
+    outline: none;
+    box-shadow: none;
+}
+.modalbody input::placeholder{
+    color: rgb(0, 0, 0);
+}
+.formlab{
+    position: relative;
+}
+.formlab label{
+    position: absolute;
+    color: black;
+    /* top:-1rem; */
+    bottom: 8px;
+    left: 0;
+    padding-left: 3px ;
+    font-size: 1rem;
+    transition: transform 1s;
+}
+.active{
+    top: -1rem;
+    padding-left: 0;
+    transform: scale(0.95);
+}
+.modalbody select{
+    margin-bottom: 25px;
+    padding: 8px 0;
+}
+.formlab select{
+    padding: 8px 0;
+    margin-bottom: 25px;
+}
+.dropdn{
+    top:-0.5rem;
+    color: black;
+    /* margin-bottom: 10px; */
+    /* top:-2rem */
+}
+.danger{
+    color: red;
+}
+.dangerborder{
+    border: 1px solid red;
+}
+#inputactive{
+    margin-top: 20px;
+}
