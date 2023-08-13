@@ -8,7 +8,6 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     column-gap: 10px;
-    padding: 10px 30px;
    text-align: center;
 }
 .items{
@@ -17,6 +16,7 @@
     border-radius: 20px;
    padding: 10px;
    letter-spacing: 1px;
+   margin: 10px;
 }
 .items li{
     list-style: none;
@@ -76,6 +76,7 @@
 }
 .searchbar{
     position: relative;
+    margin: 5px;
 }
 .iteminfo{
     display: flex;
@@ -103,3 +104,13 @@
     left: 5px;
     color: whitesmoke;
 }
+@media screen and (max-width: 1000px) {
+   .containerr{
+    grid-template-columns: 1fr 1fr ;
+   }
+  }
+  @media screen and (max-width: 550px) {
+    .containerr{
+     grid-template-columns: 1fr;
+    }
+   }

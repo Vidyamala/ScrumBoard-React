@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Hind&family=Mali:ital,wght@0,300;0,400;1,200;1,300&family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;1,200;1,400&family=Oswald:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Hind&family=Mali:ital,wght@0,300;0,400;1,200;1,300&family=Noto+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;1,200;1,400&family=Oswald:wght@500&family=Poppins&display=swap');
+.auth-main-container{
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    /* border: 1px solid red; */
+    height: 100vh;
+    background-image: linear-gradient(to right,rgb(235, 174, 148) ,rgb(221, 143, 110));
+    color: black;
+}
+.auth-title{
+    padding: 1rem;
+    /* border: 1px solid gold ; */
+    border-color: #72758F;
+    border-style: double;
+    margin-bottom: 1rem;
+    width: 100%;
+    text-align: center;
+    font-size: large;
+    letter-spacing: 0.4rem;
+    font-family: 'Oswald', sans-serif;
+}
+.auth-container{
+   margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    flex-direction: column;
+    width: 50%;
+    letter-spacing: 0.15rem;
+}
+/* normal: 50%
+   900 -75%
+   400 -90%
+*/
+.auth-tabs{
+    display: flex;
+    align-items: center;
+    /* border: 1px solid rgb(107, 92, 105); */
+    /* justify-content: space-between; */
+    /* border: 1px solid rgb(185, 76, 170); */
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+}
+.format{
+    padding: 3rem;
+    width: 100%;
+    background-color: rgb(241, 241, 241);
+    border: 1px solid gray;
+    /* border: 1px solid rgb(143, 179, 233); */
+}
+.auth-tab-div{
+    border-radius: 20px;
+   cursor: pointer;
+    text-align: center;
+    width: 50%;
+    padding: 0.5rem;
+}
+.auth-form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    /* border: 1px solid orange; */
+}
+.auth-form-container{
+    width: 100%;
+    padding: 0.5rem;
+    /* border: 1px solid brown; */
+}
+.auth-form label{
+    font-weight: bold;
+}
+.auth-form input{
+    margin-bottom: 15px;
+   border: 1px solid gray;
+    outline: none;
+}
+.auth-form input:focus{
+    outline: none;
+}
+@media only screen and (max-width: 900px) {
+   .auth-container{
+     width: 75%;
+   }
+  }
+  @media only screen and (max-width: 500px) {
+    .auth-container{
+      width: 90%;
+    }
+   }
+   @media only screen and (max-width: 450px) {
+    .auth-container{
+        padding: 0.5rem;
+      width: 100%;
+    }
+   }
