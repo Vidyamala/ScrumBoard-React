@@ -4,6 +4,7 @@ import './Home.css'
 import {data} from "../../DummyData/Data"
 import {createContext, useContext, useEffect, useRef, useState} from "react"
 import ViewTask from '../../Components/ViewOrUpdateTask/ViewOrUpdateTask';
+import { appcontext } from '../../App';
 export const context = createContext();
 function Home() {
 const [showViewTask,setShowViewTask]=useState(false);
@@ -18,6 +19,7 @@ const [endListIndex,setEndListIndex]=useState(null);
 const end=useRef(null);
 const endenter=useRef(null);
 const [update,setupdate]=useState(true);
+const {loggedUser,setLoggedUser}=useContext(appcontext);
 const [isShow,setisShow]=useState(false);
 const [selectedItem,setSelectedItem]=useState({  taskName: "",
 createdBy: "Vidyamala S",
@@ -30,6 +32,9 @@ acceptanceCriteria: "",
 assignee: "",
 estimatedEffort:"",
 priority:""});
+useEffect(()=>{
+  console.log(loggedUser,"loggeduser in home")
+},[])
 useEffect(()=>{
 console.log("hello",open)
   console.log(startlist,endlist,startListIndex,endListIndex)

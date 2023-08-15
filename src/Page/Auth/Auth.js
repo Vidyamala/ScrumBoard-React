@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./Auth.css"
 import ClipLoader from "react-spinners/ClipLoader";
 import {  useNavigate } from "react-router-dom";
 import { login, signup } from "../../API/Auth";
+import { appcontext } from "../../App";
 function Auth(){
     const [userDetails, setUserDetails] = useState({ userId: "", password: "", email: ""});
     //userId,password,email,profilePic
-    const [loggedUser,setLoggedUser]=useState([])
+    const {setLoggedUser,loggedUser}=useContext(appcontext)
     const [loading,setLoading]=useState(false);
     const [error, setError] = useState("")
     const [isLogin,setIsLogin]=useState(true);
