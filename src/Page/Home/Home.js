@@ -10,8 +10,18 @@ import { getWave } from '../../API/GetWave';
 import { getSprint } from '../../API/GetSprint';
 import { getCategory } from '../../API/GetCategory';
 import { getTasks } from '../../API/GetTask';
+import { getUserById } from '../../API/GetUserById';
+import useWindowSize from '../../CustomHooks/WindowSize';
+import {  Link, useNavigate } from 'react-router-dom';
 export const context = createContext();
 function Home() {
+  useEffect(()=>{
+    var userId=localStorage.getItem("userId");
+    if(!userId){
+      navigater("/unauthenticated")
+    }
+  })
+  const navigater=useNavigate();
 const [showViewTask,setShowViewTask]=useState(false);
 const [open,setOpen]=useState([]);
 const [closed,setClosed]=useState([]);
@@ -50,6 +60,7 @@ const handleProjectSelect=async(e)=>{
     setCategoryGetTask([]);
   }
 }
+
 const handleWaveSelect=async(e)=>{
   setSelectedWave(e.target.value);
   if(e.target.value!="--Phase--"){
@@ -81,29 +92,42 @@ const handleCategorySelect=(e)=>{
   }
   setSelectedCategory(e.target.value);
 }
+const tasks={
+  inprogress:[],
+  closed:[],
+  blocked:[],
+  todo:[]
+}
 const getTask=async()=>{
-  if(selectedProject!="--Project--"){
-    if(selectedWave!="--Phase--"){
-      if(selectedSprint!="--Sprint--"){
-        if(selectedCategory!="--Category--"){
+
+  if(selectedProject!="--Project--" && selectedProject){
+    console.log("--Project--",selectedProject)
+    if(selectedWave!="--Phase--" && selectedWave){
+      if(selectedSprint!="--Sprint--" && selectedSprint){
+        if(selectedCategory!="--Category--" && selectedCategory){
           console.log(selectedProject,selectedWave,selectedSprint,selectedCategory)
           const Tasks=await getTasks(selectedProject,selectedWave,selectedSprint,selectedCategory);
           console.log(Tasks,"Finally get task");
           Tasks.map((e)=>{
             console.log(e,e.status)
             if(e.status=="todo"){
-              setOpen([...open,e])
+              tasks.todo.push(e)
             }
             else if(e.status=="inprogress"){
-              setInprogress([...inprogress,e]);
+              tasks.inprogress.push(e)
             }
             else if(e.status=="blocked"){
-              setBlocked([...blocked,e]);
+              tasks.blocked.push(e)
             }
-            else if(e.status=="closed"){
-              setClosed([...closed,e])
+            else if(e.status=="completed"){
+             tasks.closed.push(e)
             }
-          })
+         })
+         console.log(tasks.todo)
+          setOpen(tasks.todo);
+          setBlocked(tasks.blocked);
+          setClosed(tasks.closed);
+          setInprogress(tasks.inprogress)
         }
         else{
           setSelectedError("--Category-- is not valid category")
@@ -121,6 +145,9 @@ const getTask=async()=>{
     setSelectedError("--Project-- is not valid Project")
   }
 }
+useEffect(()=>{
+  console.log(selectedError,"selected Error")
+},[selectedError])
 const [selectedItem,setSelectedItem]=useState({  taskName: "",
 createdBy: "Vidyamala S",
 project: "",
@@ -142,7 +169,28 @@ useEffect(()=>{
  console.log(selectedProject,"projjjjjjjjjectttttt")
 },[selectedProject])
 useEffect(()=>{
-console.log("hello",open)
+console.log("hello",open);
+
+var task=null
+if(startlist=="blocked"){
+  task=blocked[startListIndex]
+}
+else if(startlist=="inprogress"){
+  task=inprogress[startListIndex];
+}
+else if(startlist=="open"){
+  task=open[startListIndex]
+}
+else {
+  task=closed[startListIndex]
+}
+
+console.log(task,"Selected Task")
+if(task){
+  if(loggedUser.userType=="ADMIN" || task.assignee==loggedUser.userId || task.createdBy==loggedUser.userId){
+   
+ 
+
   console.log(startlist,endlist,startListIndex,endListIndex)
   if(startlist==endlist){
 
@@ -182,7 +230,8 @@ console.log(listitem)
      console.log(open,inprogress,blocked,closed)
 
    }
-
+  }
+}
 },[endlist,update])
 
   const handleDragStart = (e, index,listname) => {
@@ -242,11 +291,37 @@ console.log("hero",end.current,endenter.current)
     console.log("hello",end.current);
   }
   const [query,setQuery]=useState("");
+  useEffect(
+   ()=>{
+    (async()=>{
+      var id=localStorage.getItem("userId")
+      var res= await getUserById(id);
+      console.log(res,"res from useEffect")
+  
+      setLoggedUser(res)
+    })()
+   },[])
+   useEffect(()=>{
+    console.log(loggedUser,"loggedUser in home.js")
+   },[loggedUser])
+   const handleLogout=()=>{
+    localStorage.clear();
+    navigater("/")
+   }
+   const [width, height] = useWindowSize();
   return (<>
 
 <div className='container-fluid cont'>
-<h1 className='text-center'>Project Management</h1>
-{selectedError && <p>{selectedError}</p>}
+  <div className='title-container'>
+
+ 
+{width>450 && <h1 className='title text-center'>Project Management</h1>}
+{width<=450 && width>370 &&  <h2 className='title text-center'>Project Management</h2>}
+{width<=370 && width>320 &&<h4 className='title text-center'>Project Management</h4>}
+{width<=320 && <h5 className='title text-center'>Project Management</h5>}
+<button className='logout btn btn-danger' onClick={handleLogout} >{width>900?"Logout":<i class="fa fa-sign-out" aria-hidden="true"></i>}</button>
+</div>
+{selectedError && <p className='text-center  text-danger' style={{margin:0}}>{selectedError}</p>}
 <div className='nav'>
 <select onChange={handleProjectSelect} className="dropbtn">
             <option>--Project--</option>
@@ -290,7 +365,7 @@ console.log("hero",end.current,endenter.current)
         <hr />
         {
 
-          open.filter((e)=>{
+         open.length!=0 && open.filter((e)=>{
             return e.taskName.toLowerCase().includes(query);
           }).map((item, index) => {
             return (
@@ -307,7 +382,7 @@ console.log("hero",end.current,endenter.current)
       <div className="items" onDragOver={(e)=>{handledivdrop(e,"inprogress")}}>
       <div className='item-header'>  <h2>Inprogress</h2><div className='count'>{inprogress.length}</div></div>
         <hr />
-        {inprogress.filter((e)=>{
+        {inprogress.length!=0 && inprogress.filter((e)=>{
             return e.taskName.toLowerCase().includes(query);
           }).map((item, index) => {
           return (
@@ -324,7 +399,7 @@ console.log("hero",end.current,endenter.current)
       <div className="items" onDragOver={(e)=>{handledivdrop(e,"blocked")}}>
       <div className='item-header'>  <h2>Blocked</h2><div className='count'>{blocked.length}</div></div>
         <hr />
-        {blocked.filter((e)=>{
+        {blocked.length!=0 && blocked.filter((e)=>{
             return e.taskName.toLowerCase().includes(query);
           }).map((item, index) => {
           return (
@@ -341,7 +416,7 @@ console.log("hero",end.current,endenter.current)
       <div className="items" onDragOver={(e)=>{handledivdrop(e,"closed")}}>
       <div className='item-header'>  <h2>Completed</h2><div className='count'>{closed.length}</div></div>
         <hr />
-        {closed.filter((e)=>{
+        {closed.length!=0 && closed.filter((e)=>{
             return e.taskName.toLowerCase().includes(query);
           }).map((item, index) => {
           return (
@@ -357,7 +432,7 @@ console.log("hero",end.current,endenter.current)
         }</div>
       </div>
     </div>
-    <context.Provider value={selectedItem}>
+    <context.Provider value={{selectedItem,projectGetTask,categoryGetTask}}>
     <ViewTask showViewTask={showViewTask} setShowViewTask={setShowViewTask}  title="Hello"/>
     </context.Provider>
     </>

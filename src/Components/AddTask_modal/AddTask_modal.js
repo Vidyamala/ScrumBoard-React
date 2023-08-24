@@ -1,7 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
+import { createTask } from '../../API/CreateTask';
+import { getCategory } from '../../API/GetCategory';
+import { getProject } from '../../API/GetProject';
+import { getSprint } from '../../API/GetSprint';
+import { getWave } from '../../API/GetWave';
+import { appcontext } from '../../App';
 import "./AddTask_modal.css"
 function AddTaskModal({ setShowAddTaskModal, showAddTaskModal, title }) {
+    const [pro, setPro] = useState([]);
+    const [phases, setPhases] = useState([]);
+    const [spi, setSprint] = useState([]);
+    const [categ, setCategories] = useState([]);
+    const [proSprint, setProSprint] = useState();
+    const [phaseSprint, setPhaseSprint] = useState();
     const taskname = useRef(null);
     const createdby = useRef(null);
     const project = useRef(null);
@@ -25,8 +37,23 @@ function AddTaskModal({ setShowAddTaskModal, showAddTaskModal, title }) {
         estimatedEffort:false,
         priority:false,
     }
+    const { setLoggedUser, loggedUser } = useContext(appcontext);
     const [isfocused, setIsfocused] = useState(initialfocus)
     console.log("hello")
+    useEffect(() => {
+        let getPro = async () => {
+          let res = await getProject();
+          console.log(res, "res");
+          setPro(res);
+        };
+        getPro();
+        let getCateg = async () => {
+          let res = await getCategory();
+          //   console.log(res, "categres");
+          setCategories(res);
+        };
+        getCateg();
+      }, []);
     const handleFocus = (e) => {
         // console.log("clicked",e.target.id)
         let id = e.target.id;
@@ -78,7 +105,7 @@ function AddTaskModal({ setShowAddTaskModal, showAddTaskModal, title }) {
     }
     const initialvalue={
         taskname: "",
-        createdBy: "Vidyamala S",
+        createdBy:loggedUser.userId ,
         project: "",
         sprint: "",
         phase: "",
@@ -96,65 +123,74 @@ function AddTaskModal({ setShowAddTaskModal, showAddTaskModal, title }) {
         setIsfocused(initialfocus);
         setInputvalue(initialvalue)
     }
-    const handleInputChange=(e)=>{
-console.log(e.target.value)
+    const handleInputChange = (e) => {
+        console.log(e.target.value);
         let name = e.target.name;
         if (name === "taskname") {
-            setInputvalue({ ...inputvalue, taskname: e.target.value });
+          setInputvalue({ ...inputvalue, taskname: e.target.value });
+        } else if (name === "createdBy") {
+          setInputvalue({ ...inputvalue, createdBy: e.target.value });
+        } else if (name === "project") {
+          let Project = e.target.value;
+          setProSprint(Project);
+          let getPha = async () => {
+            let res = await getWave(Project);
+            console.log(res, "Phaseres");
+            setPhases(res);
+          };
+          getPha();
+    
+          setInputvalue({ ...inputvalue, project: e.target.value });
+        } else if (name === "phase") {
+          setPhaseSprint(e.target.value);
+          let getSpi = async () => {
+            let res = await getSprint(proSprint, e.target.value);
+            console.log(res, "spieres");
+            setSprint(res);
+          };
+          getSpi();
+          setInputvalue({ ...inputvalue, phase: e.target.value });
+        } else if (name === "sprint") {
+          setInputvalue({ ...inputvalue, sprint: e.target.value });
+        } else if (name === "category") {
+          setInputvalue({ ...inputvalue, category: e.target.value });
+        } else if (name === "status") {
+          setInputvalue({ ...inputvalue, status: e.target.value });
+        } else if (name === "acceptanceCriteria") {
+          setInputvalue({ ...inputvalue, acceptanceCriteria: e.target.value });
+        } else if (name === "assignee") {
+          setInputvalue({ ...inputvalue, assignee: e.target.value });
+        } else if (name === "priority") {
+          setInputvalue({ ...inputvalue, priority: e.target.value });
+        } else if (name === "estimatedEffort") {
+          setInputvalue({ ...inputvalue, estimatedEffort: e.target.value });
         }
-        else if (name === 'createdBy') {
-            setInputvalue({ ...inputvalue, createdBy: e.target.value });
-        }
-        else if (name === "project") {
-            setInputvalue({ ...inputvalue, project: e.target.value });
-        }
-        else if (name === "phase") {
-            setInputvalue({ ...inputvalue, phase: e.target.value });
-        }
-        else if (name === "sprint") {
-            setInputvalue({ ...inputvalue, sprint: e.target.value });
-        }
-        else if (name === "category") {
-            setInputvalue({ ...inputvalue, category: e.target.value });
-        }
-        else if (name === "status") {
-            setInputvalue({ ...inputvalue, status: e.target.value });
-        }
-        else if (name === "acceptanceCriteria") {
-            setInputvalue({ ...inputvalue, acceptanceCriteria: e.target.value });
-        }
-        else if (name === "assignee") {
-            setInputvalue({ ...inputvalue, assignee: e.target.value });
-        }
-        else if (name === "priority") {
-            setInputvalue({ ...inputvalue, priority: e.target.value });
-        }
-        else if (name === "estimatedEffort") {
-            setInputvalue({ ...inputvalue, estimatedEffort: e.target.value });
-        }
-    }
+      };
     const[isCreateTaskClicked,setIsCreateTaskClicked]=useState(false);
     const [errormsg,setErrorMsg]=useState("");
-    const handlecreatetask=()=>{
+    const handlecreatetask=async()=>{
         console.log("clicked")
         setIsfocused(initialfocus)
         setIsCreateTaskClicked(true);
         for(const obj in inputvalue){
-           if(!inputvalue[obj]){
+          if(obj=="createdBy") continue;
+           else if(!inputvalue[obj]){
+            
             setErrorMsg("Field is empty")
             return;
            }
         }
         if(errormsg){
+          console.log("error",errormsg)
             return;
         }
         else{
-            console.log("Call APi");
+            console.log(inputvalue,"InputValue")
+            await createTask(inputvalue);
         }
+        handleHide()
     }
-    useEffect(() => {
-        console.log(inputvalue);
-    }, [inputvalue])
+ 
     return (
         <Modal size="lg" show={showAddTaskModal} onHide={handleHide} backdrop="static" centered scrollable>
             <Modal.Header closeButton>
@@ -167,45 +203,64 @@ console.log(e.target.value)
                     <label id="taskname" onClick={handleFocus} className={isfocused.taskname || inputvalue.taskname ? 'formlab active text-primary' : (!inputvalue.taskname)&&isCreateTaskClicked?"formlab text-danger": "formlab"}>Task Name:</label>
                     <input ref={taskname} onClick={()=>{console.log("it clicked")}} onFocus={handleFocus} onChange={(e)=>handleInputChange(e)} value={inputvalue.taskname} name='taskname' id={isfocused.taskname ? "inputactive" : ""} className="form-control" type='text'></input>
                 </div>
-                <div className='formlab'>
-                <label   style={{cursor:"not-allowed"}} id="createdBy" onClick={handleFocus} className={((isfocused.createdBy || inputvalue.createdBy  )&& !isCreateTaskClicked) ? 'formlab active text-primary': (inputvalue.createdBy)&&!isCreateTaskClicked?"formlab active text-primary" :(inputvalue.createdBy && isCreateTaskClicked)?"formlab active text-primary":(isCreateTaskClicked && isfocused.createdBy)?"formlab active text-primary":(isCreateTaskClicked && !inputvalue.createdBy)? "formlab text-danger": "formlab"}>Created By:</label>
-                    {/* <input name="createdBy" onChange={(e)=>handleInputChange(e)} value={inputvalue.createdBy} onFocus={handleFocus} id={isfocused.createdBy ? "inputactive" : ""} className="form-control" type='text'></input> */}
-                    <input ref={createdby} name="createdBy"  style={{cursor:"not-allowed",caretColor:"transparent"}} value={inputvalue.createdBy}  onFocus={handleFocus} id={isfocused.createdBy ? "inputactive" : ""} className="form-control" type='text'></input>
-                </div>
+            
                 <div className=''>
                 <label id="project" onClick={handleFocus} className={(inputvalue.project)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.project))?"   text-danger":(isfocused.project && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Project:</label>
                 <select ref={project} name="project" onChange={(e)=>handleInputChange(e)} value={inputvalue.project} onFocus={handleFocus}  className="w-100">
                         <option  >--Project--</option>
+                        {pro.length != 0 &&
+              pro.map((proo, index) => {
+                return <option key={index}>{proo}</option>;
+              })}
                     </select>
                 </div>
                 <div className=''>
                 <label id="phase" onClick={handleFocus} className={(inputvalue.phase)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.phase))?"   text-danger":(isfocused.phase && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Phase:</label>
                 <select ref={phase} name="phase" onChange={(e)=>handleInputChange(e)} value={inputvalue.phase} onFocus={handleFocus}  className="w-100">
                         <option>--Phase--</option>
+                        {phases.length != 0 &&
+              phases.map((pha, index) => {
+                return <option key={index}>{pha}</option>;
+              })}
                     </select>
                 </div>
                 <div className=''>
                 <label id="sprint" onClick={handleFocus} className={(inputvalue.sprint)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.sprint))?"   text-danger":(isfocused.sprint && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Sprint:</label>
                 <select ref={sprint} name="sprint" onChange={(e)=>handleInputChange(e)} value={inputvalue.sprint} onFocus={handleFocus}  className="w-100">
                         <option>--Sprint--</option>
+                        {spi.length != 0 &&
+              spi.map((Sprint, index) => {
+                return <option key={index}>{Sprint}</option>;
+              })}
                     </select>
                 </div>
                 <div className=''>
                 <label id="category" onClick={handleFocus} className={(inputvalue.category)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.category))?"   text-danger":(isfocused.category && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Category:</label>
                 <select ref={category} name="category" onChange={(e)=>handleInputChange(e)} value={inputvalue.category} onFocus={handleFocus}  className="w-100">
                         <option>--Category--</option>
+                        {categ.length != 0 &&
+              categ.map((Categ, index) => {
+                return <option key={index}>{Categ}</option>;
+              })}
                     </select>
                 </div>
                 <div className=''>
                 <label id="status" onClick={handleFocus} className={(inputvalue.status)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.status))?"   text-danger":(isfocused.status && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Status:</label>
                 <select  ref={status} name="status" onChange={(e)=>handleInputChange(e)} value={inputvalue.status} onFocus={handleFocus}  className="w-100">
                         <option>--Status--</option>
+                        <option value="todo">To-Do</option>
+            <option value="inprogress">In Progress</option>
+            <option value="blocked">Blocked</option>
+            <option value="completed">Completed</option>
                     </select>
                 </div>
                 <div className=''>
                 <label id="priority" onClick={handleFocus} className={(inputvalue.priority)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.priority))?"   text-danger":(isfocused.priority && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Priority:</label>
                 <select name="priority" onChange={(e)=>handleInputChange(e)} value={inputvalue.priority} onFocus={handleFocus}  className="w-100">
                         <option>--Priority--</option>
+                        <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
                     </select>
                 </div>
                 <div className='formlab'>

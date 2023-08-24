@@ -50,7 +50,8 @@ function Auth(){
             if (res.token) {
                 setLoggedUser(res);
                 localStorage.setItem("token",res.token);
-               
+                localStorage.setItem("userId",res.userId);
+                localStorage.setItem("userType",res.userType)
                 setUserDetails({ userId: "", password: "", email: ""});
                 navigate("/board")
             }

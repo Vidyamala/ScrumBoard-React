@@ -1,8 +1,10 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
+import { appcontext } from '../../App';
 import {context} from "../../Page/Home/Home"
 function ViewTask({ showViewTask, setShowViewTask, title }) {
-   const selectedItem=useContext(context)
+   const {selectedItem,projectGetTask,categoryGetTask}=useContext(context)
+   const {loggedUser}=useContext(appcontext)
     console.log("in view selectedItem",selectedItem)
     const taskname = useRef(null);
     const createdby = useRef(null);
@@ -142,8 +144,12 @@ console.log(e.target.value)
         }
     }
     useEffect(() => {
-        setInputvalue({...selectedItem})
+        setInputvalue({...selectedItem});
+        console.log(selectedItem,"selected Item")
     }, [selectedItem])
+    useEffect(()=>{
+        console.log(inputvalue,"Inputvlaluuee")
+    },[inputvalue])
     return (
         <Modal size='lg' show={showViewTask} onHide={handleHide} backdrop="static" centered scrollable>
             <Modal.Header closeButton>
@@ -162,10 +168,12 @@ console.log(e.target.value)
                     <input ref={createdby} name="createdBy"  style={{cursor:"not-allowed",caretColor:"transparent"}} value={inputvalue.createdBy}  onFocus={handleFocus} id={isfocused.createdBy ? "inputactive" : ""} className="form-control" type='text'></input>
                 </div>
                 <div className=''>
-                <label id="project" onClick={handleFocus} className={(inputvalue.project)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.project))?"   text-danger":(isfocused.project && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Project:</label>
+                <label id="project" onClick={handleFocus} className={(selectedItem.project)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.project))?"   text-danger":(isfocused.project && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Project:</label>
                 <select ref={project} name="project" onChange={(e)=>handleInputChange(e)} value={inputvalue.project} onFocus={handleFocus}  className="w-100">
                         <option  >--Project--</option>
-                        <option>Project1</option>
+                        {   projectGetTask.map((e)=>{
+         return <option>{e}</option>
+   })}
                     </select>
                 </div>
                 <div className=''>
@@ -186,23 +194,28 @@ console.log(e.target.value)
                 <label id="category" onClick={handleFocus} className={(inputvalue.category)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.category))?"   text-danger":(isfocused.category && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Category:</label>
                 <select ref={category} name="category" onChange={(e)=>handleInputChange(e)} value={inputvalue.category} onFocus={handleFocus}  className="w-100">
                         <option>--Category--</option>
-                        <option>Development</option>
+                        {   categoryGetTask.map((e)=>{
+         return <option>{e}</option>
+   })}
                     </select>
                 </div>
                 <div className=''>
                 <label id="status" onClick={handleFocus} className={(inputvalue.status)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.status))?"   text-danger":(isfocused.status && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Status:</label>
                 <select  ref={status} name="status" onChange={(e)=>handleInputChange(e)} value={inputvalue.status} onFocus={handleFocus}  className="w-100">
                         <option>--Status--</option>
-                        <option>Open</option>
-                        <option>Inprogress</option>
-                        <option>Blocked</option>
-                        <option>Completed</option>
+                        <option value={"todo"}>Open</option>
+                        <option value={"inprogress"}>Inprogress</option>
+                        <option value={"blocked"}>Blocked</option>
+                        <option value={"completed"}>Completed</option>
                     </select>
                 </div>
                 <div className=''>
                 <label id="priority" onClick={handleFocus} className={(inputvalue.priority)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.priority))?"   text-danger":(isfocused.priority && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Priority:</label>
                 <select name="priority" onChange={(e)=>handleInputChange(e)} value={inputvalue.priority} onFocus={handleFocus}  className="w-100">
                         <option>--Priority--</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
                     </select>
                 </div>
                 <div className='formlab'>
@@ -220,7 +233,13 @@ console.log(e.target.value)
             </Modal.Body>
             <Modal.Footer>
                 <button onClick={handleHide} className='btn btn-secondary'>Close</button>
-                <button onClick={handlecreatetask} className='btn btn-primary'>Update Task</button>
+                {(loggedUser.userId == inputvalue.assignee ||
+          loggedUser.userId == inputvalue.createdBy ||
+          loggedUser.userType == "ADMIN") && (
+          <button onClick={handlecreatetask} className="btn btn-primary">
+            Update Task
+          </button>
+        )}
             </Modal.Footer>
         </Modal>
     )

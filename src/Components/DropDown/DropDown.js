@@ -4,8 +4,8 @@ function DropDown({opt,placeholder}){
         <div >
         <select onChange={()=>{console.log("changed")}} className="dropbtn">
             <option>--{placeholder}--</option>
-{   opt.map((e)=>{
-   return <option>{e}</option>
+            {   opt.map((e)=>{
+         return <option>{e}</option>
    })}
         </select>
         </div>

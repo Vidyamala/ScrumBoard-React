@@ -114,3 +114,18 @@
      grid-template-columns: 1fr;
     }
    }
+.title{
+    text-transform: uppercase;
+    font-weight:600;
+    flex: 1;
+    margin: 0;
+}
+.logout{
+   
+  
+}
+.title-container{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+}
