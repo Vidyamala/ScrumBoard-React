@@ -1,10 +1,24 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
+import { getSprint } from '../../API/GetSprint';
+import { getWave } from '../../API/GetWave';
+import { updateTask } from '../../API/UpdateTask';
 import { appcontext } from '../../App';
 import {context} from "../../Page/Home/Home"
 function ViewTask({ showViewTask, setShowViewTask, title }) {
    const {selectedItem,projectGetTask,categoryGetTask}=useContext(context)
-   const {loggedUser}=useContext(appcontext)
+   const {loggedUser}=useContext(appcontext);
+   const [phaseUpdate,setPhaseUpdate]=useState([]);
+   const [sprintUpdate,setSprintUpdate]=useState([]);
+   useEffect(()=>{
+    (async()=>{
+        const wave=await getWave(selectedItem.project);
+        setPhaseUpdate(wave);
+       const sprint= await getSprint(selectedItem.project,selectedItem.phase);
+        setSprintUpdate(sprint)
+   
+    })()
+   },[selectedItem])
     console.log("in view selectedItem",selectedItem)
     const taskname = useRef(null);
     const createdby = useRef(null);
@@ -97,13 +111,33 @@ console.log(e.target.value)
             setInputvalue({ ...inputvalue, createdBy: e.target.value });
         }
         else if (name === "project") {
-            setInputvalue({ ...inputvalue, project: e.target.value });
+           if(e.target.value!="--Project--"){
+            console.log(e.target.value,"project selected")
+            setInputvalue({ ...inputvalue, project: e.target.value,phase:"",sprint:"" });
+            (async()=>{
+                const phase=await getWave(e.target.value);
+                setPhaseUpdate([...phase]);
+            })()
+          
+            
+            setSprintUpdate([]);
+            console.log("done")
+           }
         }
         else if (name === "phase") {
+           if(e.target.value!="--Phase--"){
             setInputvalue({ ...inputvalue, phase: e.target.value });
+            (async()=>{
+                const sprint=await getSprint(inputvalue.project,e.target.value);
+           
+                setSprintUpdate([...sprint])
+            })()
+           }
         }
         else if (name === "sprint") {
+           if(e.target.value!="--Sprint--"){
             setInputvalue({ ...inputvalue, sprint: e.target.value });
+           }
         }
         else if (name === "category") {
             setInputvalue({ ...inputvalue, category: e.target.value });
@@ -126,21 +160,26 @@ console.log(e.target.value)
     }
     const[isCreateTaskClicked,setIsCreateTaskClicked]=useState(false);
     const [errormsg,setErrorMsg]=useState("");
-    const handlecreatetask=()=>{
+    const handleTaskUpdate=()=>{
         console.log("clicked")
         setIsfocused(initialfocus)
         setIsCreateTaskClicked(true);
+        
         for(const obj in inputvalue){
-           if(!inputvalue[obj]){
+           if(inputvalue[obj]==undefined){
             setErrorMsg("Field is empty")
-            return;
+           console.log("Error",obj,inputvalue[obj],inputvalue)
            }
         }
+        
         if(errormsg){
             return;
         }
         else{
-            console.log("Call APi");
+            (async()=>{
+                await updateTask(selectedItem._id,inputvalue)
+            })();
+            console.log("updated")
         }
     }
     useEffect(() => {
@@ -172,7 +211,7 @@ console.log(e.target.value)
                 <select ref={project} name="project" onChange={(e)=>handleInputChange(e)} value={inputvalue.project} onFocus={handleFocus}  className="w-100">
                         <option  >--Project--</option>
                         {   projectGetTask.map((e)=>{
-         return <option>{e}</option>
+         return <option value={e}>{e}</option>
    })}
                     </select>
                 </div>
@@ -180,14 +219,18 @@ console.log(e.target.value)
                 <label id="phase" onClick={handleFocus} className={(inputvalue.phase)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.phase))?"   text-danger":(isfocused.phase && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Phase:</label>
                 <select ref={phase} name="phase" onChange={(e)=>handleInputChange(e)} value={inputvalue.phase} onFocus={handleFocus}  className="w-100">
                         <option>--Phase--</option>
-                        <option>Phase1</option>
+                        {   phaseUpdate.map((e)=>{
+         return <option value={e}>{e}</option>
+        })}
                     </select>
                 </div>
                 <div className=''>
                 <label id="sprint" onClick={handleFocus} className={(inputvalue.sprint)? '  text-primary ' :( isCreateTaskClicked && !(inputvalue.sprint))?"   text-danger":(isfocused.sprint && !isCreateTaskClicked)? "  text-primary dropdn":" "}>Sprint:</label>
                 <select ref={sprint} name="sprint" onChange={(e)=>handleInputChange(e)} value={inputvalue.sprint} onFocus={handleFocus}  className="w-100">
                         <option>--Sprint--</option>
-                        <option>Sprint1</option>
+                        {   sprintUpdate.map((e)=>{
+         return <option value={e}>{e}</option>
+        })}
                     </select>
                 </div>
                 <div className=''>
@@ -195,7 +238,7 @@ console.log(e.target.value)
                 <select ref={category} name="category" onChange={(e)=>handleInputChange(e)} value={inputvalue.category} onFocus={handleFocus}  className="w-100">
                         <option>--Category--</option>
                         {   categoryGetTask.map((e)=>{
-         return <option>{e}</option>
+         return <option value={e}>{e}</option>
    })}
                     </select>
                 </div>
@@ -236,7 +279,7 @@ console.log(e.target.value)
                 {(loggedUser.userId == inputvalue.assignee ||
           loggedUser.userId == inputvalue.createdBy ||
           loggedUser.userType == "ADMIN") && (
-          <button onClick={handlecreatetask} className="btn btn-primary">
+          <button onClick={handleTaskUpdate} className="btn btn-primary" >
             Update Task
           </button>
         )}

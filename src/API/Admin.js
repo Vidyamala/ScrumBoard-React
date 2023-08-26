@@ -84,7 +84,7 @@ export const createSprint = async (Details) => {
 }
 export const getAllUsers=async(status)=>{
     if(status){
-      var url=`http://localhost:8888/projectmanagement/api/v1/user?status:"PENDING`
+      var url=`http://localhost:8888/projectmanagement/api/v1/user?status=PENDING`
     }
     else{
       var url=`http://localhost:8888/projectmanagement/api/v1/user`

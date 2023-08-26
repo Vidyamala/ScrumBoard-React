@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addEngineerToProject, approveUser, createCategory, createProject, getAllProject, getAllUsers } from "../../API/Admin";
+import { addEngineerToProject, approveUser, createCategory, createPhase, createProject, createSprint, getAllProject, getAllUsers } from "../../API/Admin";
 import { getWave } from "../../API/GetWave";
 import useWindowSize from "../../CustomHooks/WindowSize";
 import "./Admin.css"
@@ -78,16 +78,24 @@ function Admin(){
         
       }
        const handleAddPhase=async()=>{
+        console.log("inside add phase",projectphase,phase)
       if(projectphase && projectphase!="--Project--" && phase && phase!="--Phase--"){
-       await createCategory({project:projectphase,category:category});
+       await createPhase({project:projectphase,phase:phase});
        setSuccess(`${phase} added to ${projectphase}`);
       }
       else{
         setSuccess("Invalid project/phase");
       }
        }
-       const handleAddSprint=()=>{
-        
+       const handleAddSprint=async()=>{
+        console.log("inside handle sprint",projectSprint,phaseSprint,sprint);
+        if(projectSprint && phaseSprint && sprint && projectSprint!="--Project--" && phaseSprint!="--Sprint--"){
+            await createSprint({project:projectSprint,phase:phaseSprint,sprint:sprint});
+            setSuccess(`${sprint} sprint added to ${projectSprint} ${phaseSprint} successfully!`)
+        }
+        else{
+            setSuccess("Invalid project/phase/sprint")
+        }
        }
      const handleAddEngineerToProject=async()=>{
        if(engineerName && engineerProject && engineerName!="--Users--" && engineerProject!="--Project--"){

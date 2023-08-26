@@ -13,6 +13,7 @@ import { getTasks } from '../../API/GetTask';
 import { getUserById } from '../../API/GetUserById';
 import useWindowSize from '../../CustomHooks/WindowSize';
 import {  Link, useNavigate } from 'react-router-dom';
+import { updateTask } from '../../API/UpdateTask';
 export const context = createContext();
 function Home() {
   useEffect(()=>{
@@ -205,12 +206,26 @@ if(task){
 console.log(listitem)
 
      startlist=="open"?setOpen(listitem):startlist=="inprogress"?setInprogress(listitem):startlist=="blocked"?setBlocked(listitem):setClosed(listitem) ;
-
+      
     }
    }
    if(startlist!=endlist){
-
-
+    var Details={}
+    if(endlist=="open"){
+      Details.status="todo"
+    }
+    else if(endlist=="inprogress"){
+      Details.status="inprogress"
+    }
+    else if(endlist=="blocked"){
+      Details.status="blocked"
+    }
+    else {
+      Details.status="completed"
+    }
+    (async()=>{
+      await updateTask(task._id,Details)
+    })()
       var startlistitem=startlist=="open"?open:startlist=="inprogress"?inprogress:startlist=="blocked"?blocked:closed ;
       var endlistitem=endlist=="open"?open:endlist=="inprogress"?inprogress:endlist=="blocked"?blocked:closed ;
       console.log(startlistitem)

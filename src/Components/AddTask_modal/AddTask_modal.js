@@ -190,7 +190,9 @@ function AddTaskModal({ setShowAddTaskModal, showAddTaskModal, title }) {
         }
         handleHide()
     }
- 
+ useEffect(()=>{
+  console.log(categ,"Categoruy")
+ },[categ])
     return (
         <Modal size="lg" show={showAddTaskModal} onHide={handleHide} backdrop="static" centered scrollable>
             <Modal.Header closeButton>
