@@ -1,8 +1,9 @@
 import axios from "axios";
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 export const createProject = async (Details) => {
   try {
     console.log(Details)
-    const res = await axios.post("http://localhost:8888/project", Details, {
+    const res = await axios.post(`${BASE_URL}/project`, Details, {
       headers: {
         "x-access-token": localStorage.getItem("token"),
       },
@@ -15,7 +16,7 @@ export const createProject = async (Details) => {
 };
 export const createSprint = async (Details) => {
     try {
-      const res = await axios.post("http://localhost:8888/sprint", Details, {
+      const res = await axios.post(`${BASE_URL}/sprint`, Details, {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },
@@ -28,7 +29,7 @@ export const createSprint = async (Details) => {
   };
   export const createPhase = async (Details) => {
     try {
-      const res = await axios.post("http://localhost:8888/phase", Details, {
+      const res = await axios.post(`${BASE_URL}/phase`, Details, {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },
@@ -42,7 +43,7 @@ export const createSprint = async (Details) => {
   };
   export const createCategory = async (Details) => {
     try {
-      const res = await axios.post("http://localhost:8888/category", Details, {
+      const res = await axios.post(`${BASE_URL}/category`, Details, {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },
@@ -57,7 +58,7 @@ export const createSprint = async (Details) => {
   export const getAllProject=async()=>{
     
     try{
-    const res=await axios.get(`http://localhost:8888/project/all`,{headers:{
+    const res=await axios.get(`${BASE_URL}/project/all`,{headers:{
         "x-access-token":localStorage.getItem("token")
     }})
      console.log(res.data,"response from getProject")
@@ -71,7 +72,7 @@ export const createSprint = async (Details) => {
  export const approveUser=async(userId)=>{
     
   try{
-  const res=await axios.put(`http://localhost:8888/projectmanagement/api/v1/user/${userId}?approve=true`,{},{headers:{
+  const res=await axios.put(`${BASE_URL}/projectmanagement/api/v1/user/${userId}?approve=true`,{},{headers:{
       "x-access-token":localStorage.getItem("token")
   }})
    console.log(res.data,"response from getProject")
@@ -84,10 +85,10 @@ export const createSprint = async (Details) => {
 }
 export const getAllUsers=async(status)=>{
     if(status){
-      var url=`http://localhost:8888/projectmanagement/api/v1/user?status=PENDING`
+      var url=`${BASE_URL}/projectmanagement/api/v1/user?status=PENDING`
     }
     else{
-      var url=`http://localhost:8888/projectmanagement/api/v1/user`
+      var url=`${BASE_URL}/projectmanagement/api/v1/user`
     }
   try{
   const res=await axios.get(url,{headers:{
@@ -104,7 +105,7 @@ export const getAllUsers=async(status)=>{
 export const addEngineerToProject=async(userId,project)=>{
     
   try{
-  const res=await axios.put(`http://localhost:8888/projectmanagement/api/v1/project/${userId}`,{project:project},{headers:{
+  const res=await axios.put(`${BASE_URL}/projectmanagement/api/v1/project/${userId}`,{project:project},{headers:{
       "x-access-token":localStorage.getItem("token")
   }})
    console.log(res.data,"response from getProject")

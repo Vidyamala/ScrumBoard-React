@@ -1,8 +1,9 @@
 import axios from "axios"
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 export const signup=async(userDetails)=>{
   
    try{
-   const res=await axios.post("http://localhost:8888/projectmanagement/api/v1/register",
+   const res=await axios.post(`${BASE_URL}/projectmanagement/api/v1/register`,
         userDetails
     )
     console.log(res,"response from reg")
@@ -16,7 +17,7 @@ export const signup=async(userDetails)=>{
 export const login=async(userDetails)=>{
     
    try{
-   const res=await axios.post("http://localhost:8888/projectmanagement/api/v1/login",
+   const res=await axios.post(`${BASE_URL}/projectmanagement/api/v1/login`,
         userDetails
     )
     console.log(res,"response from login")

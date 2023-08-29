@@ -1,9 +1,9 @@
 import axios from "axios";
-
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 export const getUserById=async(userId)=>{
     
     try{
-    const res=await axios.get(`http://localhost:8888/projectmanagement/api/v1/user/${userId}`,{headers:{
+    const res=await axios.get(`${BASE_URL}/projectmanagement/api/v1/user/${userId}`,{headers:{
         "x-access-token":localStorage.getItem("token")
     }})
      console.log(res.data,"response from getUserById")

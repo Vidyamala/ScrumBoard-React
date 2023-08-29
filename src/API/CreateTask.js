@@ -1,7 +1,8 @@
 import axios from "axios";
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 export const createTask = async (Details) => {
   try {
-    const res = await axios.post("http://localhost:8888/task", Details, {
+    const res = await axios.post(`${BASE_URL}/task`, Details, {
       headers: {
         "x-access-token": localStorage.getItem("token"),
       },
