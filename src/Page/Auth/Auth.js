@@ -107,7 +107,7 @@ function Auth(){
         <div className="auth-main-container">
             <div className="auth-container">
                 <div className="format">
-                    <div className="auth-title">Kon-nect</div>
+                    <div className="auth-title">Task-pulse</div>
                     <div className="auth-tabs">
                         <div className={`auth-tab-div ${isLogin ? "bg-info" : ""}`} onClick={handleTabs} >Log In</div>
                         <div className={`auth-tab-div ${isLogin ? "" : "bg-info"}`} onClick={handleTabs}>Sign Up</div>
